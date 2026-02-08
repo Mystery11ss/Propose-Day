@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* --- 1. SETTING THE MOOD (CSS) --- */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #2b1026, #000000);
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            overflow: hidden; /* Prevents scrolling */
+            text-align: center;
+        }
+
+        /* Floating Hearts Background */
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 77, 109, 0.15); /* Very faint red */
+            font-size: 2rem;
+            animation: floatUp 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Text Styling */
+        .line {
+            font-size: 3.5rem;
+            opacity: 0; /* Hidden initially */
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+        }
+
+        /* "Deal?" text is special */
+        .deal-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            color: #ff4d6d;
+            margin-top: 20px;
+        }
+
+        /* Buttons container */
+        .buttons {
+            margin-top: 40px;
+            opacity: 0;
+            transition: opacity 1s;
+            display: flex;
+            gap: 20px;
+            position: relative;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .yes-btn {
+            background: #ff4d6d;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 77, 109, 0.6);
+        }
+        .yes-btn:hover {
+            transform: scale(1.1);
+            background: #ff0f3b;
+            box-shadow: 0 0 25px rgba(255, 77, 109, 0.8);
+        }
+
+        .no-btn {
+            background: #fff;
+            color: #333;
+            position: relative; /* Needed for movement */
+        }
+
+        /* Success Message styling */
+        .success-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none; /* Hidden initially */
+            text-align: center;
+        }
+
+        .success-message h2 {
+            font-size: 3rem;
+            color: #ff4d6d;
+            margin: 0;
+        }
+        .success-message p {
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="background-hearts"></div>
+
+    <div id="main-content">
+        <div class="line" id="line1">You</div>
+        <div class="line" id="line2">Me</div>
+        <div class="line" id="line3">This lifetime</div>
+        <div class="line deal-text" id="line4">Deal?</div>
+
+        <div class="buttons" id="btn-group">
+            <button class="yes-btn" onclick="sayYes()">Yes, Absolutely </button>
+            <button class="no-btn" id="noBtn" onmouseover="moveButton()">No</button>
+        </div>
+    </div>
+
+    <div class="success-message" id="success">
+        <h2>Love You ❤️</h2>
+        <p>"In every version of my life, I’d choose you , Every single time"</p>
+        <p style="font-size: 1rem; opacity: 0.8;">Thank you for choosing me back</p>
+    </div>
+ 
+    <script>
+        // Generate floating hearts in background
+        function createHearts() {
+            const container = document.getElementById('background-hearts');
+            for(let i=0; i<15; i++) {
+                let heart = document.createElement('div');
+                heart.innerHTML = '❤';
+                heart.className = 'bg-heart';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // Reveal text one by one
+        window.onload = function() {
+            setTimeout(() => { showLine('line1'); }, 1000); // "You." appears at 1s
+            setTimeout(() => { showLine('line2'); }, 2500); // "Me." appears at 2.5s
+            setTimeout(() => { showLine('line3'); }, 4000); // "This lifetime." appears at 4s
+            setTimeout(() => { showLine('line4'); }, 5500); // "Deal?" appears at 5.5s
+            setTimeout(() => { 
+                document.getElementById('btn-group').style.opacity = '1'; 
+            }, 6500); // Buttons appear at 6.5s
+        };
+
+        function showLine(id) {
+            const el = document.getElementById(id);
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }
+
+        // The "Runaway No Button" Logic
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - 200);
+            const y = Math.random() * (window.innerHeight - 100);
+            
+            // Make sure it doesn't go off screen
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        }
+
+        // The "Yes" Celebration Logic
+        function sayYes() {
+            // 1. Hide the question
+            document.getElementById('main-content').style.display = 'none';
+            
+            // 2. Show success message
+            document.getElementById('success').style.display = 'block';
+
+            // 3. Trigger Confetti
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                // create random confetti from left and right corners
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: 0.1, y: 0.6 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: 0.9, y: 0.6 } }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
